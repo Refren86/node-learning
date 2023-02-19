@@ -82,7 +82,7 @@ module.exports = {
         _userId: user._id,
         tokenType: FORGOT_PASS_TOKEN,
       });
-      await emailService.sendEmail(user.email, FORGOT_PASS, { forgotPassUrl });
+      await emailService.sendEmail(user.email, FORGOT_PASS, { forgotPassUrl, userName: user.name });
 
       res.status(201).json(actionToken);
     } catch (error) {
