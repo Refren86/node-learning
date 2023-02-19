@@ -1,0 +1,31 @@
+{
+  "name": "junw-2022",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VictorKmin/june-2022.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VictorKmin/june-2022/issues"
+  },
+  "homepage": "https://github.com/VictorKmin/june-2022#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "email-templates": "^11.0.3",
+    "express": "^4.18.2",
+    "joi": "^17.7.1",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^6.9.0",
+    "nodemailer": "^6.9.1",
+    "nodemon": "^2.0.20",
+    "pug": "^3.0.2"
+  }
+}
