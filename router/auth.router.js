@@ -36,7 +36,9 @@ router.post(
 // when user enters new password and confirms it
 router.put(
   '/password/forgot',
+  authMiddleware.isPasswordValid,
   authMiddleware.checkActionToken,
+  authMiddleware.checkOldUserPasswords,
   authController.setNewPasswordAfterForgot
 );
 

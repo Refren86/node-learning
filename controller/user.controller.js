@@ -1,4 +1,4 @@
-const { hashPassword } = require('../helpers/security');
+const User = require('../dataBase/User');
 const { userService, carService } = require('../service');
 
 module.exports = {
@@ -18,15 +18,8 @@ module.exports = {
 
   addUser: async (req, res, next) => {
     try {
-      const userData = req.body;
-
-      const hashedPassword = await hashPassword(userData.password);
-
-      const userToAdd = await userService.create({
-        ...userData,
-        password: hashedPassword,
-      });
-      res.json(userToAdd);
+      const userToAdd = await User.createWithHashPassword(req.body);
+      res.status(201).json(userToAdd);
     } catch (err) {
       next(err);
     }

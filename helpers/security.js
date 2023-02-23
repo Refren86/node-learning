@@ -26,9 +26,13 @@ module.exports = {
     }
   },
 
+  compareOldPasswords: (hashedPass, password) => {
+    return bcrypt.compare(password, hashedPass);
+  },
+
   generateTokenPair: (payload = {}) => {
     const accessToken = jwt.sign(payload, ACCESS_SECRET, {
-      expiresIn: '15m',
+      expiresIn: '7d',
     });
     const refreshToken = jwt.sign(payload, REFRESH_SECRET, {
       expiresIn: '30d',

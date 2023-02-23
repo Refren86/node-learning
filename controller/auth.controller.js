@@ -1,21 +1,20 @@
 const { WEB_URL } = require('../config/config');
 const { authService, emailService, userService } = require('../service');
 const {
-  comparePasswords,
   generateTokenPair,
   generateActionToken,
   hashPassword,
 } = require('../helpers/security');
 const { WELCOME, FORGOT_PASS } = require('../enums/email.enum');
 const { FORGOT_PASS_TOKEN } = require('../enums/token.enum');
-const { actionTokenSchema } = require('../dataBase');
+const { actionTokenSchema, oldPasswordSchema } = require('../dataBase');
 
 module.exports = {
   login: async (req, res, next) => {
     try {
       const { user, body } = req;
 
-      await comparePasswords(user.password, body.password);
+      await user.comparePasswords(body.password);
 
       const tokenPair = generateTokenPair({
         id: user._id,
@@ -92,10 +91,13 @@ module.exports = {
 
   setNewPasswordAfterForgot: async (req, res, next) => {
     try {
-      const hashedPassword = await hashPassword(req.body.password);
+      const { body, user } = req;
 
+      const hashedPassword = await hashPassword(body.password);
+
+      await oldPasswordSchema.create({ _userId: user._id, password: user.password });
       await actionTokenSchema.deleteOne({ token: req.get('Authorization') }); // delete token because it can be used only once!
-      await userService.updateById(req.user._id, { password: hashedPassword });
+      await userService.updateById(user._id, { password: hashedPassword });
 
       res.json({ message: 'Success' });
     } catch (error) {

@@ -1,5 +1,7 @@
 const { Schema, model, Types } = require('mongoose');
 
+const security = require('../helpers/security');
+
 const userSchema = new Schema(
   {
     name: {
@@ -32,7 +34,37 @@ const userSchema = new Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true }, // enables virtual fields
+    toObject: { virtuals: true },
   }
 );
+
+// virtual fields (works on every find method)
+userSchema.virtual('fullName').get(function() {
+  return `${this.name} Doe`
+})
+
+// for schema
+userSchema.statics = {
+  testStatic() {
+    console.log('static');
+  },
+
+  async createWithHashPassword(userObject = {}) {
+    const hashedPassword = await security.hashPassword(userObject.password);
+    return this.create({ ...userObject, password: hashedPassword });
+  }
+};
+
+// for single record
+userSchema.methods = {
+  testMethod() {
+    console.log('method');
+  },
+
+  async comparePasswords(purePassword) {
+    await security.comparePasswords(this.password, purePassword)
+  }
+};
 
 module.exports = model('User', userSchema);
