@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const { userController } = require('../controller');
-const { userMiddleware, authMiddleware } = require('../middleware');
+const { userMiddleware, authMiddleware, fileMiddleware } = require('../middleware');
 
 // NB! First validate incoming data, then goes db validations 
 // checkAccessToken - makes endpoint protected!
@@ -42,6 +42,15 @@ router.delete(
   authMiddleware.checkAccessToken,
   userMiddleware.checkIfUserExistsDynamically('userId', 'params', '_id'),
   userController.deleteUser
+);
+
+router.patch(
+  '/:userId/avatar',
+  fileMiddleware.checkUploadImage,
+  userMiddleware.checkIfUserIdValid,
+  authMiddleware.checkAccessToken,
+  userMiddleware.checkIfUserExistsDynamically('userId', 'params', '_id'),
+  userController.uploadAvatar,
 );
 
 module.exports = router;

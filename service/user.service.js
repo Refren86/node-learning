@@ -1,6 +1,39 @@
 const { userSchema } = require('../dataBase');
+const { usersNormalizer } = require('../normalizers/user.normalizer');
 
 module.exports = {
+  findByQueryWithPagination: async (query) => {
+    const { limit = 10, page = 1, name = '', email = '' } = query;
+
+    let findObj = {};
+
+    if (name) {
+      findObj = {
+        ...findObj,
+        name: { $regex: name, $options: 'i' },
+      };
+    }
+
+    if (email) {
+      findObj = {
+        ...findObj,
+        email: { $regex: email, $options: 'i' },
+      };
+    }
+
+    const [users, count] = await Promise.all([
+      userSchema
+        .find(findObj)
+        .limit(limit)
+        .skip((+page - 1) * limit)
+        .lean(),
+      userSchema.countDocuments(findObj),
+    ]);
+
+    const normalizedUsers = usersNormalizer(users);
+
+    return { payload: normalizedUsers, page: +page, count };
+  },
   findByParams: (filtersObj = {}) => {
     return userSchema.find(filtersObj);
   },

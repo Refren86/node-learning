@@ -9,6 +9,9 @@ const userSchema = new Schema(
       required: true,
       trim: true,
     },
+    avatar: {
+      type: String
+    },
     email: {
       type: String,
       required: true,
@@ -33,6 +36,7 @@ const userSchema = new Schema(
     ],
   },
   {
+    versionKey: false, // removes __v key
     timestamps: true,
     toJSON: { virtuals: true }, // enables virtual fields
     toObject: { virtuals: true },
