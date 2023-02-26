@@ -83,7 +83,7 @@ module.exports = {
 
       const uploadedData = await s3Service.uploadPublicFile(
         req.files.avatar,
-        'users',
+        'users', // folder name
         userId
       ); // uploads on S3
       const updatedUser = await userService.updateById(userId, {
@@ -91,7 +91,28 @@ module.exports = {
       });
 
       const userDto = new UserDto(updatedUser);
-      res.json({ user: updatedUser });
+      res.json({ user: userDto });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  deleteAvatar: async (req, res, next) => {
+    try {
+      const { user } = req;
+      await s3Service.deletePublicFile(user.avatar);
+      await userService.updateById(user._id, { avatar: '' })
+      res.sendStatus(204);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  updateAvatar: async (req, res, next) => {
+    try {
+      const { user, files } = req;
+      await s3Service.updatePublicFile(user.avatar, files.avatar);
+      res.json({ message: "Successfully updated" });
     } catch (err) {
       next(err);
     }

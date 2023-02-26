@@ -4,6 +4,7 @@ const {
   S3_BUCKET_NAME,
   S3_ACCESS_KEY,
   S3_SECRET_ACCESS_KEY,
+  S3_BUCKET_URL,
 } = require('../config/config');
 const { buildFileName } = require('../helpers/files');
 
@@ -28,6 +29,30 @@ async function uploadPublicFile(fileToUpload, itemType, itemId) {
     .promise();
 }
 
+async function updatePublicFile(fileUrl, fileToUpload) {
+  return s3bucket
+    .putObject({
+      ACL: 'public-read',
+      Body: fileToUpload.data, // content
+      ContentType: fileToUpload.mimetype,
+      Bucket: S3_BUCKET_NAME,
+      Key: fileUrl.split(S3_BUCKET_URL).pop(),
+    })
+    .promise();
+}
+
+async function deletePublicFile(fileUrl) {
+  console.log(fileUrl.split(S3_BUCKET_URL).pop());
+  return s3bucket
+    .deleteObject({
+      Bucket: S3_BUCKET_NAME,
+      Key: fileUrl.split(S3_BUCKET_URL).pop(),
+    })
+    .promise();
+}
+
 module.exports = {
+  updatePublicFile,
   uploadPublicFile,
+  deletePublicFile,
 };

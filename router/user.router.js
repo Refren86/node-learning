@@ -44,13 +44,30 @@ router.delete(
   userController.deleteUser
 );
 
-router.patch(
+router.put(
   '/:userId/avatar',
   fileMiddleware.checkUploadImage,
   userMiddleware.checkIfUserIdValid,
   authMiddleware.checkAccessToken,
   userMiddleware.checkIfUserExistsDynamically('userId', 'params', '_id'),
   userController.uploadAvatar,
+);
+
+router.delete(
+  '/:userId/avatar',
+  userMiddleware.checkIfUserIdValid,
+  authMiddleware.checkAccessToken,
+  userMiddleware.checkIfUserExistsDynamically('userId', 'params', '_id'),
+  userController.deleteAvatar,
+);
+
+router.patch(
+  '/:userId/avatar',
+  fileMiddleware.checkUploadImage,
+  userMiddleware.checkIfUserIdValid,
+  authMiddleware.checkAccessToken,
+  userMiddleware.checkIfUserExistsDynamically('userId', 'params', '_id'),
+  userController.updateAvatar,
 );
 
 module.exports = router;

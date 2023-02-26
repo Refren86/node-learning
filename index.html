@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="sendMessage">SEND MESSAGE</button>
+    <button id="joinRoom1">JOIN ROOM 1</button>
+    <button id="joinRoom2">JOIN ROOM 2</button>
+
+    <script
+      src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+      integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const sendMessageBtn = document.getElementById('sendMessage');
+      const joinRoom1Btn = document.getElementById('joinRoom1');
+      const joinRoom2Btn = document.getElementById('joinRoom2');
+
+      const socket = io('http://localhost:5000', {
+        auth: {
+          // access token
+          token:
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzZTk2YzhmNWRhMWMzNTk0ZWQ3NDk2ZCIsImlhdCI6MTY3NzEwMjMyOSwiZXhwIjoxNjc3NzA3MTI5fQ.y6eKn_dkkwE6ASxqxdQIMk0udjuEHLbBnuIbt5etCM4',
+          // query: { age: 20, name: 'Finn' },
+        },
+      });
+
+      sendMessageBtn.addEventListener('click', () => {
+        socket.emit('message:send', { message: 'Hello from front!' });
+      });
+
+      socket.on('message:new', (data) => {
+        const divEl = document.write(data);
+      });
+
+      joinRoom1Btn.addEventListener('click', () => {
+        socket.emit('room:join', { roomId: 1 })
+      })
+
+      joinRoom2Btn.addEventListener('click', () => {
+        socket.emit('room:join', { roomId: 2 })
+      })
+
+      socket.on('room:newUser', ({message}) => {
+        console.log(message);
+      })
+    </script>
+  </body>
+</html>
